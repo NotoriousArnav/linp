@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block body %}
+      <!--
+// v0 by Vercel.
+// https://v0.dev/t/AidtnOzZakU
+-->
+
+<div class="flex w-full h-full">
+    <div class="w-1/2 p-4 border-r">
+      <div class="grid w-full gap-1.5">
+        <label
+          class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="markdown-editor"
+          >Markdown Editor</label
+        ><textarea
+          class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder="Type your markdown here."
+          id="markdown-editor"
+          x-model="post"
+          @keyup="socket.emit('post-emit', { data: $event.target.value})"
+        ></textarea>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          What you type here will be previewed on the right.
+        </p>
+      </div>
+    </div>
+    <div class="w-1/2 p-4">
+      <h4 class="text-lg font-bold mb-2">Live Preview</h4>
+      <div
+        dir="ltr"
+        class="relative overflow-hidden h-72 w-full max-w-sm rounded-md border"
+        style="
+          position: relative;
+          --radix-scroll-area-corner-width: 0px;
+          --radix-scroll-area-corner-height: 0px;
+        "
+      >
+        <style>
+          [data-radix-scroll-area-viewport] {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            -webkit-overflow-scrolling: touch;
+          }
+          [data-radix-scroll-area-viewport]::-webkit-scrollbar {
+            display: none;
+          }
+        </style>
+        <div
+          data-radix-scroll-area-viewport=""
+          class="h-full w-full rounded-[inherit]"
+          style="overflow: hidden scroll"
+        >
+          <div style="min-width: 100%; display: table">
+            <div class="p-4 text-sm">
+              <p x-text="post" class="mt-4 leading-7">
+                The live preview of your Markdown will appear here.
+              </p>
+              <ul id="tags">
+                <h2>Suggested Hashtags</h2>
+              </ul>
+              <script>
+                ul = document.getElementById('tags');
+                socket.on('post-emit', (msg) => {
+                  console.log(msg);
+                  for (var tag in msg) {
+                    console.log(`#${tag}`);
+                  }
+                  item = document.createElement('li');
+                  ul.appendChild(item);
+                })
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
